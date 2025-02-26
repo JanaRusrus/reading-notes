@@ -256,5 +256,173 @@ After understanding tensors and gradients, Chollet revisits the **MNIST classifi
 This chapter provides the **mathematical foundation** for neural networks, preparing for **building real-world models** in the following chapters.
 
 ---
+### **Chapter 3: *Getting Started with Neural Networks***  
+ 
+
+---
+
+### **1. Anatomy of a Neural Network**  
+This section introduces the **core building blocks** of deep learning models.
+
+#### **Layers: The Building Blocks of Deep Learning**  
+- **A neural network consists of multiple layers**, each performing specific transformations on input data.
+- Layers extract features at different levels of abstraction.
+
+#### **Models: Networks of Layers**  
+- Layers are **stacked together** to form a model.
+- The two primary types of deep learning models are:
+  - **Sequential models** (a linear stack of layers).
+  - **Functional models** (more complex architectures with multiple inputs and outputs).
+
+#### **Loss Functions and Optimizers: Key Learning Components**  
+- **Loss function**: Measures how far the network’s predictions are from the actual results.
+- **Optimizer**: Determines how the network updates weights based on the loss function. Examples include:
+  - **SGD (Stochastic Gradient Descent)**
+  - **Adam**
+  - **RMSprop**
+
+---
+
+### **2. Introduction to Keras**  
+Keras is the deep-learning library used throughout the book.
+
+#### **Keras, TensorFlow, Theano, and CNTK**  
+- Keras is an **abstraction layer** built on deep learning backends such as:
+  - **TensorFlow** (Google)
+  - **Theano** (now deprecated)
+  - **CNTK** (Microsoft)
+
+#### **Developing with Keras: A Quick Overview**  
+A simple **Sequential model** can be built in Keras using:  
+```python
+from keras import models, layers  
+model = models.Sequential()  
+model.add(layers.Dense(512, activation='relu', input_shape=(28 * 28,)))  
+model.add(layers.Dense(10, activation='softmax'))  
+```
+- **First layer**: 512 neurons, **ReLU** activation.  
+- **Second layer**: 10 neurons, **softmax** activation for classification.
+
+---
+
+### **3. Setting Up a Deep Learning Workstation**  
+Chollet discusses **hardware and software setups** for deep learning.
+
+#### **Jupyter Notebooks for Deep Learning**  
+- Recommended for running deep learning experiments.
+- Provides an **interactive** coding environment.
+
+#### **Installing Keras and TensorFlow**  
+- Two options:
+  1. Install TensorFlow and Keras locally.
+  2. Use **cloud-based solutions** like Google Colab.
+
+#### **Cloud vs. Local Training**  
+- **Cloud computing** (e.g., AWS, Google Cloud) is ideal for large models.
+- **Local GPUs** (e.g., NVIDIA RTX 3090) provide high-performance training at home.
+
+---
+
+### **4. Classifying Movie Reviews: A Binary Classification Example**  
+This section introduces **sentiment analysis** using the IMDB dataset.
+
+#### **The IMDB Dataset**  
+- Contains **50,000 movie reviews** labeled as **positive or negative**.
+- **Goal**: Train a model to classify reviews based on sentiment.
+
+#### **Data Preparation**  
+- The dataset is loaded from **Keras datasets**:
+  ```python
+  from keras.datasets import imdb
+  (train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=10000)
+  ```
+- Reviews are encoded as sequences of integers (word indices).
+
+#### **Building the Model**  
+- A **fully connected network (MLP)** is used:
+  ```python
+  model = models.Sequential()
+  model.add(layers.Dense(16, activation='relu', input_shape=(10000,)))
+  model.add(layers.Dense(16, activation='relu'))
+  model.add(layers.Dense(1, activation='sigmoid'))
+  ```
+  - **Input layer**: 10,000 features (word presence).  
+  - **Hidden layers**: Two dense layers with 16 neurons each, **ReLU activation**.  
+  - **Output layer**: **Sigmoid activation** for binary classification.
+
+#### **Validating the Model**  
+- Splitting the training data into a validation set:
+  ```python
+  x_val = train_data[:10000]
+  partial_x_train = train_data[10000:]
+  ```
+- Training with **mini-batch gradient descent** for **20 epochs**.
+
+#### **Evaluating Performance**  
+- The final model achieves around **87% accuracy** on the test set.
+
+---
+
+### **5. Classifying Newswires: A Multiclass Classification Example**  
+This section extends binary classification to **multiclass classification** using the **Reuters news dataset**.
+
+#### **The Reuters Dataset**  
+- **46 categories** of news articles.
+- The task is **multiclass classification** instead of binary classification.
+
+#### **Preparing the Data**  
+- **Tokenization** is done similarly to IMDB:
+  ```python
+  from keras.datasets import reuters
+  (train_data, train_labels), (test_data, test_labels) = reuters.load_data(num_words=10000)
+  ```
+- Labels are **one-hot encoded** using `to_categorical()`.
+
+#### **Building the Model**  
+```python
+model = models.Sequential()
+model.add(layers.Dense(64, activation='relu', input_shape=(10000,)))
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(46, activation='softmax'))
+```
+- **Softmax activation** is used to output a probability distribution over **46 categories**.
+
+#### **Performance**  
+- The model achieves around **78% accuracy** on the test set.
+
+---
+
+### **6. Predicting House Prices: A Regression Example**  
+This section covers **regression**, predicting **Boston housing prices**.
+
+#### **The Boston Housing Dataset**  
+- Contains **13 features** per house (e.g., number of rooms, crime rate).
+- **Goal**: Predict the **median house price**.
+
+#### **Data Preprocessing**  
+- Features are **normalized** for better learning:
+  ```python
+  mean = train_data.mean(axis=0)
+  std = train_data.std(axis=0)
+  train_data = (train_data - mean) / std
+  test_data = (test_data - mean) / std
+  ```
+
+#### **Building the Model**  
+```python
+model = models.Sequential()
+model.add(layers.Dense(64, activation='relu', input_shape=(13,)))
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(1))  # No activation (linear output)
+```
+- **Linear activation** is used in the output layer (no activation function).
+
+#### **Evaluating with K-Fold Cross-Validation**  
+- Since the dataset is small, **K-fold validation** is used to get a more reliable performance estimate.
+
+#### **Performance**  
+- The model achieves a **mean absolute error (MAE) of around $2,550**, meaning the model’s predictions are, on average, off by **$2,550**.
+
+---
 
 
